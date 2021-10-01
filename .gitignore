@@ -122,5 +122,7 @@ dist
 .webpack/
 
 # Custom
+_creds/
 creds/
 *.cred.*
+*.rest

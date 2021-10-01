@@ -4,8 +4,9 @@
 	"description": "Server code including but not limited to Runtime, DataBase, IoT logic, API",
 	"main": "app.js",
 	"scripts": {
-		"start:dev": "nodemon app.js",
-		"start": "node app.js"
+		"start": "set NODE_ENV=development&& nodemon app.js",
+		"start:prod": "set NODE_ENV=production&& node app.js",
+		"debug": "set NODE_ENV=development&& ndb node app.js"
 	},
 	"repository": {
 		"type": "git",
@@ -26,6 +27,7 @@
 		"socket.io": "^4.2.0"
 	},
 	"devDependencies": {
-		"morgan": "^1.10.0"
+		"morgan": "^1.10.0",
+		"ndb": "^1.1.5"
 	}
 }
