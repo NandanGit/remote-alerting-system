@@ -126,3 +126,6 @@ _creds/
 creds/
 *.cred.*
 *.rest
+sandbox/
+sandbox.*
+*.sandbox.*
