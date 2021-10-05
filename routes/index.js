@@ -1,4 +1,9 @@
 module.exports = {
 	authRoutes: require('./authRoutes'),
-	// dbSandboxRoutes: require('./dbSandboxRoutes'),
+	userRoutes: require('./userRoutes'),
+	deviceRoutes: require('./deviceRoutes'),
+	sandboxRoutes:
+		process.env.NODE_ENV !== 'production'
+			? require('./routes.sandbox')
+			: undefined,
 };

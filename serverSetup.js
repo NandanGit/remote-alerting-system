@@ -6,6 +6,9 @@ const cors = require('cors');
 // Import Routes
 const {
 	authRoutes,
+	sandboxRoutes,
+	userRoutes,
+	deviceRoutes,
 	// dbSandboxRoutes, // Temporary routes
 } = require('./routes');
 
@@ -20,7 +23,12 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // // Mount Routes
-app.use('/', authRoutes);
+app.use('/auth/', authRoutes);
+app.use('/user/', userRoutes);
+app.use('/device/', deviceRoutes);
+if (process.env.NODE_ENV !== 'production') {
+	app.use('/sandbox/', sandboxRoutes);
+}
 
 const server = http.createServer(app);
 

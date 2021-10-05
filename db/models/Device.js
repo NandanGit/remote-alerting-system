@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const validator = require('validator');
 
 const deviceSchema = new Schema(
 	{
@@ -6,6 +7,8 @@ const deviceSchema = new Schema(
 			type: String,
 			required: [true, 'DeviceId is required'],
 			unique: true,
+			trim: true,
+			uppercase: true,
 			validate: {
 				validator: (id) => {
 					return /^[0-9A-F]{16}$/.test(id);
@@ -16,9 +19,20 @@ const deviceSchema = new Schema(
 		displayName: {
 			type: String,
 			required: [true, 'Display Name is required'],
+			trim: true,
+			maxlength: [20, 'Display Name can not be more than 20 characters'],
+			minlength: [3, 'Display Name must be at least 3 characters'],
+			length: [3, 20],
 			validate: {
-				validator: (name) => {},
-				message: (props) => `${props.value} is an invalid display name`,
+				validator: (name) => {
+					name = name.trim();
+					if (!validator.isAlphanumeric(name.replace(/ /g, '')))
+						return false;
+					if (!validator.isAlpha(name[0])) return false;
+					return true;
+				},
+				message: (props) =>
+					`"${props.value}" is an invalid display name`,
 			},
 		},
 		owner: {
@@ -30,13 +44,61 @@ const deviceSchema = new Schema(
 			type: Boolean,
 			default: false,
 		},
-		ranges: {
-			type: Object,
-			default: {},
-		},
-		readings: [Object],
-		mailingList: [Object], // email,isVerified
-		messagingList: [Object], // mobileNumber, isVerified
+		ranges: [
+			new Schema({
+				label: {
+					type: String,
+					required: [true, 'Label is required'],
+				},
+				minThreshold: {
+					type: Number,
+					required: [true, 'Minimum Threshold is required'],
+				},
+				maxThreshold: {
+					type: Number,
+					required: [true, 'Maximum Threshold is required'],
+				},
+				unit: {
+					type: String,
+					required: [true, 'Unit is required'],
+				},
+			}),
+		],
+		readings: [
+			new Schema(
+				{
+					label: {
+						type: String,
+						required: [true, 'Label is required'],
+					},
+					value: {
+						type: Number,
+						required: [true, 'Value is required'],
+					},
+				},
+				{ timestamps: true }
+			),
+		],
+		recipients: [
+			new Schema({
+				name: {
+					type: String,
+					required: [true, 'Recipient name is required'],
+				},
+				type: {
+					type: String,
+					enum: ['email', 'sms'],
+					required: [true, 'Email or SMS type is required'],
+				},
+				address: {
+					type: String,
+					required: [
+						true,
+						"Recipient's address/ mobile number is required",
+					],
+				},
+			}),
+		],
 	},
 	{ timestamps: true }
 );
@@ -45,12 +107,8 @@ deviceSchema.virtual('readingsCount').get(function () {
 	return this.readings.length;
 });
 
-deviceSchema.virtual('emailReceiverCount').get(function () {
-	return this.mailingList.length;
-});
-
-deviceSchema.virtual('smsReceiverCount').get(function () {
-	return this.messagingList.length;
+deviceSchema.virtual('recipientCount').get(function () {
+	return this.recipients.length;
 });
 
 const Device = model('Device', deviceSchema);

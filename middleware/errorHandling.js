@@ -13,16 +13,27 @@ const globalErrorHandler = async (err, req, res, next) => {
 			case 11000:
 				return res.status(400).json({
 					success: false,
-					errors: ['User already exists'],
+					errors: { user: 'User already exists' },
 				});
 		}
+	} else if (err.name === 'CustomError') {
+		return res.status(400).json({
+			success: false,
+			errors: { error: err.message },
+		});
+	} else if (err.name === 'SyntaxError') {
+		return res.status(400).json({
+			success: false,
+			errors: { error: 'Json format is not valid' },
+		});
 	}
 	console.log(`Error: ${err.name}`);
+	console.log(err);
 	res.status(500).json({
 		success: false,
 		error: 'Something went wrong on our side',
 	});
-	next();
+	// next();
 };
 
 const catchAsync = (fn) => {
