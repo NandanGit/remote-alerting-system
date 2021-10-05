@@ -17,7 +17,7 @@ const globalErrorHandler = async (err, req, res, next) => {
 				});
 		}
 	}
-	console.log('Not a DB error');
+	console.log(`Error: ${err.name}`);
 	res.status(500).json({
 		success: false,
 		error: 'Something went wrong on our side',

@@ -5,6 +5,7 @@
 	"main": "app.js",
 	"scripts": {
 		"start": "set NODE_ENV=development&& nodemon app.js",
+		"start:once": "set NODE_ENV=development&& node app.js",
 		"start:prod": "set NODE_ENV=production&& node app.js",
 		"debug": "set NODE_ENV=development&& ndb node app.js"
 	},
@@ -16,6 +17,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"@sendgrid/mail": "^7.4.7",
+		"@vonage/server-sdk": "^2.10.10",
 		"aws-iot-device-sdk": "^2.2.11",
 		"bcryptjs": "^2.4.3",
 		"cors": "^2.8.5",

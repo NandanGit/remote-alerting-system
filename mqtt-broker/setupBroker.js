@@ -24,7 +24,7 @@ MqttBroker.on('connect', () => {
 });
 
 MqttBroker.on('error', (error) => {
-	console.log('Error: AWS IoT Mqtt Broker closed unexpectedly');
+	console.log(Date.now() + 'Error: AWS IoT Mqtt Broker closed unexpectedly');
 	MqttBroker = awsIoT.device({
 		keyPath: './_creds/private.pem.key',
 		certPath: './_creds/certificate.pem.crt',
