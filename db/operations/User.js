@@ -8,7 +8,7 @@ exports.create = async (user) => {
 };
 
 exports.findUserByUsername = async (username) => {
-	const foundUser = await User.findOne({ username }, { password: 0 });
+	const foundUser = await User.findOne({ username });
 	return foundUser;
 };
 

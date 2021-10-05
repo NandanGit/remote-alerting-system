@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema(
 	{
@@ -79,6 +80,11 @@ const userSchema = new Schema(
 
 userSchema.virtual('deviceCount').get(function () {
 	return this.devices.length;
+});
+
+userSchema.pre('save', function (next) {
+	this.password = bcrypt.hashSync(this.password, 10);
+	next();
 });
 
 const User = model('User', userSchema);

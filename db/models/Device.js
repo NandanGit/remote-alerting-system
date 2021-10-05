@@ -18,7 +18,8 @@ const deviceSchema = new Schema(
 		},
 		displayName: {
 			type: String,
-			required: [true, 'Display Name is required'],
+			// required: [true, 'Display Name is required'],
+			default: 'Device Name',
 			trim: true,
 			maxlength: [20, 'Display Name can not be more than 20 characters'],
 			minlength: [3, 'Display Name must be at least 3 characters'],
@@ -67,16 +68,15 @@ const deviceSchema = new Schema(
 		readings: [
 			new Schema(
 				{
-					label: {
-						type: String,
-						required: [true, 'Label is required'],
-					},
-					value: {
-						type: Number,
-						required: [true, 'Value is required'],
+					dataPoints: {
+						type: Object,
+						required: [true, 'Atleast one Data Point are required'],
 					},
 				},
-				{ timestamps: true }
+				{
+					timestamps: { createdAt: true, updatedAt: false },
+					_id: false,
+				}
 			),
 		],
 		recipients: [

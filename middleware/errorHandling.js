@@ -13,7 +13,7 @@ const globalErrorHandler = async (err, req, res, next) => {
 			case 11000:
 				return res.status(400).json({
 					success: false,
-					errors: { user: 'User already exists' },
+					errors: { duplicate: 'Entity already exists' },
 				});
 		}
 	} else if (err.name === 'CustomError') {
