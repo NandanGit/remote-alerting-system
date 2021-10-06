@@ -49,4 +49,39 @@ const catchAsync = (fn) => {
 	};
 };
 
-module.exports = { globalErrorHandler, catchAsync };
+const generalErrorHandler = async (err) => {
+	if (err.name === 'ValidationError') {
+		for (e in err.errors) {
+			err.errors[e] = err.errors[e].message;
+		}
+		return console.log(err.errors);
+	} else if (err.name === 'MongoServerError') {
+		switch (err.code) {
+			case 11000:
+				return console.log('Error: Entity already exists');
+		}
+	} else if (err.name === 'CustomError') {
+		return console.log(`General Error: ${err.type} --> ${err.message}`);
+	} else if (err.name === 'SyntaxError') {
+		return console.log('Error: Json format is not valid');
+	} else if (err.name === 'JsonWebTokenError') {
+		console.log('Error: JsonWebTokenError');
+	}
+
+	console.log('General Error Handler: Something went south!!!');
+	console.log(`Error   : ${err.name}\nMessage : ${err.message}`);
+	console.log(err);
+};
+
+const catchGeneralAsync = (fn) => {
+	return (...args) => {
+		fn(...args).catch(generalErrorHandler);
+	};
+};
+
+module.exports = {
+	globalErrorHandler,
+	catchAsync,
+	catchGeneralAsync,
+	generalErrorHandler,
+};
