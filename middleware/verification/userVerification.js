@@ -7,12 +7,12 @@ const verifyUser = catchAsync(async (req, res, next) => {
 	const { authtoken: authToken } = req.headers;
 
 	if (!authToken) {
-		return next(new CustomError('No auth token provided'));
+		return next(new CustomError('No auth token provided', 'authToken'));
 	}
 
 	jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
 		if (err) {
-			return next(new CustomError('Invalid token'));
+			return next(new CustomError('Invalid token', 'authToken'));
 		}
 
 		req.user = decoded;

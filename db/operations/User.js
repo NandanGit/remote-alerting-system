@@ -17,7 +17,7 @@ exports.findIdByUsername = async (username) => {
 	if (foundUser) {
 		return foundUser._id;
 	}
-	throw new CustomError('User not found');
+	throw new CustomError('User not found', 'user');
 };
 
 exports.updatePassword = async (username, password) => {

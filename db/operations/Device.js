@@ -13,9 +13,9 @@ exports.add = async (device) => {
 	const { username, secretKey, deviceId } = device;
 	// Working on THIS!!!!!
 	const existingDevice = await Device.findOne({ deviceId });
-	if (!existingDevice) throw new CustomError('Device not found');
+	if (!existingDevice) throw new CustomError('Device not found', 'device');
 	if (existingDevice.secretKey !== secretKey)
-		throw new CustomError('Invalid secret key');
+		throw new CustomError('Invalid secret key', 'secretKey');
 	const userId = await userOps.findIdByUsername(username);
 	const updatedDevice = await Device.findOneAndUpdate(
 		{ deviceId },

@@ -38,25 +38,31 @@ exports.signupController = catchAsync(async (req, res, next) => {
 exports.loginController = catchAsync(async (req, res, next) => {
 	const { username, password, adminPassword } = req.body;
 	if (!username || !password) {
-		return next(new CustomError('Username and password are required'));
+		return next(
+			new CustomError(
+				'Username and password are required',
+				'missingFields'
+			)
+		);
 	}
 
 	// Compare the hashed password with the provided password
 	const existingUser = await dbOps.User.findUserByUsername(username);
 	// return res.json({});
 	if (!existingUser) {
-		return next(new CustomError('Invalid Username'));
+		return next(new CustomError('Invalid Username', 'username'));
 	}
 
 	if (!(await bcrypt.compare(password, existingUser.password))) {
-		return next(new CustomError('Invalid Password'));
+		return next(new CustomError('Invalid Password', 'password'));
 	}
 
 	// Check if the user account is verified
 	if (!existingUser.isVerified) {
 		return next(
 			new CustomError(
-				'Account is not verified, Check you registered email for the verification link'
+				'Account is not verified, Check you registered email for the verification link',
+				'notVerified'
 			)
 		);
 	}
@@ -74,7 +80,7 @@ exports.loginController = catchAsync(async (req, res, next) => {
 		if (
 			!(await bcrypt.compare(adminPassword, process.env.ADMIN_PASSWORD))
 		) {
-			return next(new CustomError('Invalid admin password'));
+			return next(new CustomError('Invalid admin password', 'password'));
 		}
 		user.isAdmin = true;
 	}
@@ -92,7 +98,9 @@ exports.verifyAccountController = catchAsync(async (req, res, next) => {
 	// Extract the verificationToken from the url
 	const { token: verificationToken } = req.params;
 	if (!verificationToken) {
-		return next(new CustomError('Invalid verification token'));
+		return next(
+			new CustomError('Invalid verification token', 'verificationToken')
+		);
 	}
 
 	// Verify the token

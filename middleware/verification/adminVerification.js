@@ -6,7 +6,8 @@ const verifyAdmin = catchAsync(async (req, res, next) => {
 	if (!req.user.isAdmin) {
 		return next(
 			new CustomError(
-				'Login along with the admin password to access this route'
+				'Login along with the admin password to access this route',
+				'notVerified'
 			)
 		);
 	}

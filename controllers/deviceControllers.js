@@ -10,7 +10,8 @@ exports.addDeviceController = catchAsync(async (req, res, next) => {
 	if (!displayName || !deviceId || !secretKey) {
 		return next(
 			new CustomError(
-				'Please provide all the fields (displayName, deviceId, secretKey)'
+				'Please provide all the fields (displayName, deviceId, secretKey)',
+				'missingFields'
 			)
 		);
 	}
