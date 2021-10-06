@@ -13,18 +13,26 @@ exports.signupController = catchAsync(async (req, res, next) => {
 	req.body.isVerified = false;
 	const createdUser = await dbOps.User.create(req.body);
 
-	// Create a token
-	const user = {
-		username: createdUser.username,
-		email: createdUser.email,
-		displayName: createdUser.displayName,
-		devices: createdUser.devices,
-	};
-	const authToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+	// Create an account verification token
+
+	const verificationToken = jwt.sign(
+		createdUser.username,
+		process.env.VERIFICATION_TOKEN_SECRET
+	);
+
+	// Send the verification email
+	if (process.env.NODE_ENV !== 'production') {
+		return res.json({
+			success: true,
+			verificationLink: `http://localhost:${process.env.PORT}/auth/verify-account/${verificationToken}`,
+		});
+	}
+
+	// Send the success message
 	res.json({
 		success: true,
-		createdUser,
-		authToken,
+		message:
+			'Account created successfully, check the registered email for verification link',
 	});
 });
 
@@ -43,6 +51,15 @@ exports.loginController = catchAsync(async (req, res, next) => {
 
 	if (!(await bcrypt.compare(password, existingUser.password))) {
 		return next(new CustomError('Invalid Password'));
+	}
+
+	// Check if the user account is verified
+	if (!existingUser.isVerified) {
+		return next(
+			new CustomError(
+				'Account not verified, Check you registered email for the verification link'
+			)
+		);
 	}
 
 	// Create a token
