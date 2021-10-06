@@ -1,23 +1,26 @@
 const dbOps = require('../db/operations');
 const { catchAsync } = require('../middleware/errorHandling');
-const CustomError = require('../Utils/CustomError');
+const CustomError = require('../utils/CustomError');
 
 exports.addDeviceController = catchAsync(async (req, res, next) => {
 	// res.json({
 	// 	msg: 'You have reached addDeviceController',
 	// });
-	const ownerName = req.body.ownerName;
-	if (!ownerName) {
-		return next(new CustomError('OwnerName not provided'));
+	const { displayName, deviceId, secretKey } = req.body;
+	if (!displayName || !deviceId || !secretKey) {
+		return next(
+			new CustomError(
+				'Please provide all the fields (displayName, deviceId, secretKey)'
+			)
+		);
 	}
-	const userId = await dbOps.User.findIdByUsername(ownerName);
-	const createdDevice = await dbOps.Device.create({
+	const addedDevice = await dbOps.Device.add({
 		...req.body,
-		owner: userId,
+		username: req.user.username,
 	});
-	res.json({
+	res.status(201).json({
 		success: true,
-		createdDevice,
+		addedDevice,
 	});
 });
 

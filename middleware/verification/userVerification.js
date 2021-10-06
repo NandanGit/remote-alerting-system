@@ -4,7 +4,7 @@ const { catchAsync } = require('../errorHandling');
 const CustomError = require('../../utils/customError');
 
 const verifyUser = catchAsync(async (req, res, next) => {
-	const { authToken } = req.body;
+	const { authtoken: authToken } = req.headers;
 
 	if (!authToken) {
 		return next(new CustomError('No auth token provided'));

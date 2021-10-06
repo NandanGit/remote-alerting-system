@@ -1,8 +1,8 @@
 const { Router } = require('express');
-const { addDeviceController } = require('../controllers/adminControllers');
+const { createDeviceController } = require('../controllers/adminControllers');
 
 const adminRoutes = Router();
 
-adminRoutes.route('/add-device').post(addDeviceController);
+adminRoutes.route('/create-device').post(createDeviceController);
 
 module.exports = adminRoutes;

@@ -126,6 +126,7 @@ _creds/
 creds/
 *.cred.*
 *.rest
+*.http
 sandbox/
 sandbox.*
 *.sandbox.*

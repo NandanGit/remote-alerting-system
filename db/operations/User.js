@@ -1,4 +1,4 @@
-const CustomError = require('../../Utils/CustomError');
+const CustomError = require('../../utils/CustomError');
 const User = require('../models/User');
 
 exports.create = async (user) => {

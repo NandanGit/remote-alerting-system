@@ -16,12 +16,23 @@ const deviceSchema = new Schema(
 				message: (props) => `${props.value} is not a valid device id`,
 			},
 		},
+		secretKey: {
+			type: String,
+			required: [true, 'SecretKey is required'],
+			trim: true,
+			validate: {
+				validator: (id) => {
+					return /^[a-zA-Z0-9!@#$]{8}$/.test(id);
+				},
+				message: (props) => `${props.value} is not a valid secret key`,
+			},
+		},
 		displayName: {
 			type: String,
 			// required: [true, 'Display Name is required'],
 			default: 'Device Name',
 			trim: true,
-			maxlength: [20, 'Display Name can not be more than 20 characters'],
+			maxlength: [50, 'Display Name can not be more than 50 characters'],
 			minlength: [3, 'Display Name must be at least 3 characters'],
 			length: [3, 20],
 			validate: {
@@ -39,31 +50,34 @@ const deviceSchema = new Schema(
 		owner: {
 			type: Schema.Types.ObjectId,
 			ref: 'User',
-			required: [true, 'Owner is required'],
+			// required: [true, 'Owner is required'],
 		},
-		isVerified: {
-			type: Boolean,
-			default: false,
-		},
+		// isVerified: {
+		// 	type: Boolean,
+		// 	default: false,
+		// },
 		ranges: [
-			new Schema({
-				label: {
-					type: String,
-					required: [true, 'Label is required'],
+			new Schema(
+				{
+					label: {
+						type: String,
+						required: [true, 'Label is required'],
+					},
+					min: {
+						type: Number,
+						required: [true, 'Minimum Threshold is required'],
+					},
+					max: {
+						type: Number,
+						required: [true, 'Maximum Threshold is required'],
+					},
+					unit: {
+						type: String,
+						required: [true, 'Unit is required'],
+					},
 				},
-				minThreshold: {
-					type: Number,
-					required: [true, 'Minimum Threshold is required'],
-				},
-				maxThreshold: {
-					type: Number,
-					required: [true, 'Maximum Threshold is required'],
-				},
-				unit: {
-					type: String,
-					required: [true, 'Unit is required'],
-				},
-			}),
+				{ _id: false }
+			),
 		],
 		readings: [
 			new Schema(
@@ -80,24 +94,37 @@ const deviceSchema = new Schema(
 			),
 		],
 		recipients: [
-			new Schema({
-				name: {
-					type: String,
-					required: [true, 'Recipient name is required'],
+			new Schema(
+				{
+					name: {
+						type: String,
+						required: [true, 'Recipient name is required'],
+					},
+					type: {
+						type: String,
+						enum: ['email', 'sms'],
+						required: [true, 'Email or SMS type is required'],
+					},
+					value: {
+						type: String,
+						required: [
+							true,
+							"Recipient's email/ mobile number is required",
+						],
+						validate: {
+							validator: (value) => {
+								return (
+									validator.isEmail(value) ||
+									validator.isMobilePhone(value, 'en-IN')
+								);
+							},
+							message: (props) =>
+								`${props.value} is not a valid email/mobile number`,
+						},
+					},
 				},
-				type: {
-					type: String,
-					enum: ['email', 'sms'],
-					required: [true, 'Email or SMS type is required'],
-				},
-				address: {
-					type: String,
-					required: [
-						true,
-						"Recipient's address/ mobile number is required",
-					],
-				},
-			}),
+				{ _id: false }
+			),
 		],
 	},
 	{ timestamps: true }

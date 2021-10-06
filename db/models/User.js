@@ -68,7 +68,7 @@ const userSchema = new Schema(
 			trim: true,
 			validate: {
 				validator: (mobNum) => {
-					return /^\d{10}$/.test(String(mobNum));
+					return validator.isMobilePhone(mobNum, 'en-IN');
 				},
 				message: (props) =>
 					`${props.value} is an invalid mobile number`,
