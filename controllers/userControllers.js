@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const dbOps = require('../db/operations');
 const { catchAsync } = require('../middleware/errorHandling');
 const CustomError = require('../utils/CustomError');
+const { validatePassword } = require('../utils/validators');
 
 exports.updatePasswordController = catchAsync(async (req, res, next) => {
 	const { oldPassword, newPassword } = req.body;
@@ -13,6 +14,14 @@ exports.updatePasswordController = catchAsync(async (req, res, next) => {
 	const existingUser = await dbOps.User.findUserByUsername(req.user.username);
 	if (!(await bcrypt.compare(oldPassword, existingUser.password)))
 		throw new CustomError('Old password is incorrect');
+
+	// Check if the new password is valid
+	const passwordError = validatePassword(newPassword);
+	if (passwordError) throw new CustomError(passwordError, 'password');
+
+	// Check if the new password is same as old password
+	if (await bcrypt.compare(newPassword, existingUser.password))
+		throw new CustomError('New password cannot be same as old password');
 
 	// Hash the new password
 	const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -28,6 +37,5 @@ exports.updatePasswordController = catchAsync(async (req, res, next) => {
 	res.json({
 		success: true,
 		message: 'Password updated successfully',
-		updatedUser,
 	});
 });

@@ -1,6 +1,8 @@
 const { Schema, model } = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const { validatePassword } = require('../../utils/validators');
+const CustomError = require('../../utils/CustomError');
 
 const userSchema = new Schema(
 	{
@@ -88,6 +90,8 @@ userSchema.virtual('deviceCount').get(function () {
 });
 
 userSchema.pre('save', function (next) {
+	const error = validatePassword(this.password);
+	if (error) throw new CustomError(error, 'password');
 	this.password = bcrypt.hashSync(this.password, 10);
 	next();
 });

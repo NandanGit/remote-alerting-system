@@ -14,7 +14,6 @@ exports.signupController = catchAsync(async (req, res, next) => {
 	const createdUser = await dbOps.User.create(req.body);
 
 	// Create an account verification token
-
 	const verificationToken = jwt.sign(
 		createdUser.username,
 		process.env.VERIFICATION_TOKEN_SECRET

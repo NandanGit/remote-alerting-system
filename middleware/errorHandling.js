@@ -17,9 +17,11 @@ const globalErrorHandler = async (err, req, res, next) => {
 				});
 		}
 	} else if (err.name === 'CustomError') {
+		const errors = {};
+		errors[err.type] = err.message;
 		return res.status(400).json({
 			success: false,
-			errors: { error: err.message },
+			errors,
 		});
 	} else if (err.name === 'SyntaxError') {
 		return res.status(400).json({
