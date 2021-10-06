@@ -9,6 +9,7 @@ const deviceSchema = new Schema(
 			unique: true,
 			trim: true,
 			uppercase: true,
+			unmodifiable: true,
 			validate: {
 				validator: (id) => {
 					return /^[0-9A-F]{16}$/.test(id);
@@ -20,6 +21,7 @@ const deviceSchema = new Schema(
 			type: String,
 			required: [true, 'SecretKey is required'],
 			trim: true,
+			unmodifiable: true,
 			validate: {
 				validator: (id) => {
 					return /^[a-zA-Z0-9!@#$]{8}$/.test(id);

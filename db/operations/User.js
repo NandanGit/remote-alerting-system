@@ -19,3 +19,13 @@ exports.findIdByUsername = async (username) => {
 	}
 	throw new CustomError('User not found');
 };
+
+exports.updatePassword = async (username, password) => {
+	// const password =
+	const updatedUser = await User.findOneAndUpdate(
+		{ username },
+		{ password },
+		{ new: true }
+	);
+	return updatedUser;
+};

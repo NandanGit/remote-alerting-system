@@ -9,6 +9,8 @@ exports.signupController = catchAsync(async (req, res, next) => {
 	// Hash the password
 	const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+	// Prevent user from not verifying the password
+	req.body.isVerified = false;
 	const createdUser = await dbOps.User.create(req.body);
 
 	// Create a token
@@ -67,13 +69,5 @@ exports.loginController = catchAsync(async (req, res, next) => {
 		success: true,
 		authToken,
 		isAdmin: user.isAdmin,
-	});
-});
-
-exports.updatePasswordController = catchAsync(async (req, res, next) => {
-	// Compare the hashed password with the provided password
-	res.json({
-		success: false,
-		message: 'Route under construction',
 	});
 });

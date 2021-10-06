@@ -12,6 +12,7 @@ const userSchema = new Schema(
 			lowercase: true,
 			maxlength: [15, 'Username can not be more than 15 characters'],
 			minlength: [3, 'Username must be at least 3 characters'],
+			unmodifiable: true,
 			validate: {
 				validator: (name) => {
 					name = name.trim();
@@ -43,6 +44,10 @@ const userSchema = new Schema(
 		password: {
 			type: String, // Hashed
 			required: [true, 'Password is required'],
+		},
+		isVerified: {
+			type: Boolean,
+			default: false,
 		},
 		devices: [
 			{
