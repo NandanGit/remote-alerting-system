@@ -57,7 +57,7 @@ exports.loginController = catchAsync(async (req, res, next) => {
 	if (!existingUser.isVerified) {
 		return next(
 			new CustomError(
-				'Account not verified, Check you registered email for the verification link'
+				'Account is not verified, Check you registered email for the verification link'
 			)
 		);
 	}
@@ -86,5 +86,28 @@ exports.loginController = catchAsync(async (req, res, next) => {
 		success: true,
 		authToken,
 		isAdmin: user.isAdmin,
+	});
+});
+
+exports.verifyAccountController = catchAsync(async (req, res, next) => {
+	// Extract the verificationToken from the url
+	const { token: verificationToken } = req.params;
+	if (!verificationToken) {
+		return next(new CustomError('Invalid verification token'));
+	}
+
+	// Verify the token
+	const username = jwt.verify(
+		verificationToken,
+		process.env.VERIFICATION_TOKEN_SECRET
+	);
+
+	// Change the verification status of the user
+	const verifiedUser = await dbOps.User.changeVerificationStatus(username);
+
+	res.json({
+		success: false,
+		message:
+			'Account verified successfully, You can now login with your username and password',
 	});
 });

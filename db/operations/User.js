@@ -29,3 +29,12 @@ exports.updatePassword = async (username, password) => {
 	);
 	return updatedUser;
 };
+
+exports.changeVerificationStatus = async (username) => {
+	const updatedUser = await User.findOneAndUpdate(
+		{ username },
+		{ isVerified: true },
+		{ new: true }
+	);
+	return updatedUser;
+};

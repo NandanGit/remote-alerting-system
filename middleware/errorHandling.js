@@ -24,14 +24,19 @@ const globalErrorHandler = async (err, req, res, next) => {
 	} else if (err.name === 'SyntaxError') {
 		return res.status(400).json({
 			success: false,
-			errors: { error: 'Json format is not valid' },
+			errors: { SyntaxError: 'Json format is not valid' },
+		});
+	} else if (err.name === 'JsonWebTokenError') {
+		return res.status(400).json({
+			success: false,
+			errors: { JsonWebTokenError: err.message },
 		});
 	}
-	console.log(`Error: ${err.name}`);
+	console.log(`Error   : ${err.name}\nMessage : ${err.message}`);
 	console.log(err);
 	res.status(500).json({
 		success: false,
-		error: 'Something went wrong on our side',
+		errors: { ServerError: 'Something went wrong on our side' },
 	});
 	// next();
 };
