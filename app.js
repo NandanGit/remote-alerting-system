@@ -7,7 +7,7 @@ const db = require('./db/setup');
 db.connect();
 
 // Mqtt Broker
-// const MqttBroker = require('./mqtt-broker/setupBroker');
+const MqttBroker = require('./mqtt-broker/setupBroker');
 
 // Error handling middleware
 const { globalErrorHandler } = require('./middleware/errorHandling');

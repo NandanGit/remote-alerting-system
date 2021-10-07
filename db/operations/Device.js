@@ -24,3 +24,17 @@ exports.add = async (device) => {
 	);
 	return updatedDevice;
 };
+
+exports.addDataPoints = async (deviceId, dataPoints) => {
+	// console.log(dataPoints);
+	const updatedDevice = await Device.updateOne(
+		{ deviceId },
+		{ $push: { readings: { dataPoints } } },
+		{
+			runValidators: true,
+			context: 'query',
+			new: true,
+		}
+	);
+	return updatedDevice;
+};
