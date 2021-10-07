@@ -33,7 +33,7 @@ exports.addDataPoints = async (deviceId, dataPoints) => {
 		{
 			runValidators: true,
 			context: 'query',
-			new: true,
+			// new: true,
 		}
 	);
 	return updatedDevice;
