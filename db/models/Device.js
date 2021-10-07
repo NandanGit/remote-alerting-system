@@ -86,7 +86,7 @@ const deviceSchema = new Schema(
 				{
 					dataPoints: {
 						type: Object,
-						required: [true, 'Atleast one Data Point are required'],
+						required: [true, 'Data Points are required'],
 					},
 				},
 				{

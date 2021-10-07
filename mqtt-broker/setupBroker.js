@@ -1,5 +1,5 @@
 const awsIoT = require('aws-iot-device-sdk');
-const incomingMessageHandler = require('./messageHandler');
+const MqttHandlers = require('../mqtt-handlers');
 
 var MqttBroker = awsIoT.device({
 	keyPath: './_creds/private.pem.key',
@@ -10,7 +10,7 @@ var MqttBroker = awsIoT.device({
 	region: 'ap-south-1',
 });
 
-MqttBroker.on('message', incomingMessageHandler);
+MqttBroker.on('message', MqttHandlers.incoming.messageHandler);
 
 MqttBroker.on('connect', () => {
 	console.log('Connected to AWS IoT!!');

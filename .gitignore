@@ -130,3 +130,4 @@ creds/
 sandbox/
 sandbox.*
 *.sandbox.*
+settings.json
