@@ -14,6 +14,7 @@ const verifyUser = catchAsync(async (req, res, next) => {
 		if (err) {
 			return next(new CustomError('Invalid token', 'authToken'));
 		}
+		// console.log(decoded);
 
 		req.user = decoded;
 
