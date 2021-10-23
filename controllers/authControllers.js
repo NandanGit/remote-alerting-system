@@ -6,9 +6,6 @@ const { catchAsync } = require('../middleware/errorHandling');
 const CustomError = require('../utils/CustomError');
 
 exports.signupController = catchAsync(async (req, res, next) => {
-	// Hash the password
-	const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
 	// Prevent user from not verifying the password
 	req.body.isVerified = false;
 	const createdUser = await dbOps.User.create(req.body);
@@ -73,6 +70,7 @@ exports.loginController = catchAsync(async (req, res, next) => {
 		email: existingUser.email,
 		displayName: existingUser.displayName,
 		devices: existingUser.devices,
+		id: existingUser._id,
 	};
 
 	user.isAdmin = false;

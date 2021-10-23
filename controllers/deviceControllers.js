@@ -18,6 +18,7 @@ exports.addDeviceController = catchAsync(async (req, res, next) => {
 	const addedDevice = await dbOps.Device.add({
 		...req.body,
 		username: req.user.username,
+		userId: req.user.id,
 	});
 	res.status(201).json({
 		success: true,
