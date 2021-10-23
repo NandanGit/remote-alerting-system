@@ -104,7 +104,11 @@ const deviceSchema = new Schema(
 					},
 					type: {
 						type: String,
-						enum: ['email', 'sms'],
+						enum: {
+							values: ['email', 'sms'],
+							message:
+								'Recipient type must be either email or sms',
+						},
 						required: [true, 'Email or SMS type is required'],
 					},
 					value: {
