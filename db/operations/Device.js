@@ -10,18 +10,40 @@ exports.create = async (device) => {
 
 exports.add = async (device) => {
 	console.log(device);
-	const { username, secretKey, deviceId } = device;
+	const { username, secretKey, deviceId, userId } = device;
 	// Working on THIS!!!!!
 	const existingDevice = await Device.findOne({ deviceId });
 	if (!existingDevice) throw new CustomError('Device not found', 'device');
+	if (existingDevice.owner) {
+		throw new CustomError('Device already exists', 'device');
+	}
 	if (existingDevice.secretKey !== secretKey)
 		throw new CustomError('Invalid secret key', 'secretKey');
-	const userId = await userOps.findIdByUsername(username);
+	if (device.displayName) {
+		// Check if the display name is already taken by another device of the same user
+		const existingDeviceWithDisplayName = await Device.findOne(
+			{
+				owner: userId,
+				displayName: device.displayName,
+			},
+			{ displayName: 1 }
+		);
+		if (existingDeviceWithDisplayName)
+			throw new CustomError(
+				'Display name already taken by another device',
+				'displayName'
+			);
+	}
+	// const userId = await userOps.findIdByUsername(username);
 	const updatedDevice = await Device.findOneAndUpdate(
 		{ deviceId },
 		{ ...device, owner: userId },
 		{ runValidators: true, context: 'query', new: true }
 	);
+	if (!updatedDevice) throw new CustomError('Device not created', 'device');
+	// Update the devices list of the user
+	const updatedUser = await userOps.addDevice(userId, updatedDevice._id);
+	// console.log(updatedUser);
 	return updatedDevice;
 };
 

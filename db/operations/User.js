@@ -38,3 +38,12 @@ exports.changeVerificationStatus = async (username) => {
 	);
 	return updatedUser;
 };
+
+exports.addDevice = async (userId, deviceId) => {
+	const updatedUser = await User.findByIdAndUpdate(
+		userId,
+		{ $push: { devices: deviceId } },
+		{ new: true }
+	);
+	return updatedUser;
+};
