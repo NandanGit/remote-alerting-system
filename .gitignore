@@ -131,3 +131,5 @@ sandbox/
 sandbox.*
 *.sandbox.*
 settings.json
+.DS_Store
+.vscode
