@@ -20,7 +20,7 @@ exports.signupController = catchAsync(async (req, res, next) => {
 	if (process.env.NODE_ENV !== 'production') {
 		return res.json({
 			success: true,
-			verificationLink: `http://localhost:${process.env.PORT}/auth/verify-account/${verificationToken}`,
+			verificationLink: `http://127.0.0.1:${process.env.PORT}/auth/verify-account/${verificationToken}`,
 		});
 	}
 
@@ -111,7 +111,7 @@ exports.verifyAccountController = catchAsync(async (req, res, next) => {
 	const verifiedUser = await dbOps.User.changeVerificationStatus(username);
 
 	res.json({
-		success: false,
+		success: true,
 		message:
 			'Account verified successfully, You can now login with your username and password',
 	});

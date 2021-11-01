@@ -3,6 +3,12 @@ const Device = require('../models/Device');
 const CustomError = require('../../utils/CustomError');
 
 exports.create = async (device) => {
+	const existingDevice = await Device.findOne(
+		{ deviceId: device.deviceId },
+		{ deviceId: 1 }
+	);
+	if (existingDevice)
+		throw new CustomError('Device already exists', 'device');
 	const newDevice = new Device(device);
 	const createdDevice = await newDevice.save();
 	return createdDevice;
