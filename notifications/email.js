@@ -1,16 +1,12 @@
 const sgMail = require('@sendgrid/mail');
+const { alert: smsAlert } = require('./sms');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-exports.notify = (receivers, message) => {};
-
-exports.alert = (
-	receivers,
-	{ min, max, value, units, device, readingName }
-) => {
+exports.alert = (receivers, { min, max, value, units, device, label }) => {
 	const content = `
     <p>The device named <b>${device.name}</b> with the id <b>${
 		device.id
-	}</b> has recorded a ${readingName} of <b>${value}<i>${units}</i></b> which is ${
+	}</b> has recorded a ${label} of <b>${value}<i>${units}</i></b> which is ${
 		value < min
 			? 'less than the minimum value'
 			: 'greater than the maximum value'
@@ -24,7 +20,7 @@ exports.alert = (
 			await sgMail.send({
 				to: receiver,
 				from: process.env.SENDGRID_SENDER_EMAIL,
-				subject: `${readingName} is out of range`,
+				subject: `${label} is out of range`,
 				text: content,
 				html: content,
 			});
@@ -35,4 +31,20 @@ exports.alert = (
 		}
 	});
 	// console.log(content);
+};
+
+exports.notify = (receivers, param) => {
+	console.log(receivers, param);
+	const emailReceivers = receivers
+		.filter((receiver) => receiver.type === 'email')
+		.map((receiver) => receiver.value);
+	this.alert(emailReceivers, param);
+	const smsReceivers = receivers
+		.filter((receiver) => receiver.type === 'sms')
+		.map((receiver) => receiver.value);
+	console.log(smsReceivers);
+	smsAlert(smsReceivers, param);
+	const content = `
+	
+	`;
 };

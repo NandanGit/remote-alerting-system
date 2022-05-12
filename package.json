@@ -4,10 +4,10 @@
 	"description": "Server code including but not limited to Runtime, DataBase, IoT logic, API",
 	"main": "app.js",
 	"scripts": {
-		"start": "set NODE_ENV=development&& nodemon app.js",
-		"start:once": "set NODE_ENV=development&& node app.js",
-		"start:prod": "set NODE_ENV=production&& node app.js",
-		"debug": "set NODE_ENV=development&& ndb node app.js"
+		"start": "NODE_ENV=development nodemon app.js",
+		"start:once": "NODE_ENV=development node app.js",
+		"start:prod": "NODE_ENV=production node app.js",
+		"debug": "NODE_ENV=development ndb node app.js"
 	},
 	"repository": {
 		"type": "git",
@@ -27,6 +27,7 @@
 		"mongoose": "^6.0.8",
 		"nexmo": "^2.9.1",
 		"socket.io": "^4.2.0",
+		"twilio": "^3.77.0",
 		"validator": "^13.6.0"
 	},
 	"devDependencies": {

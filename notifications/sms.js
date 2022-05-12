@@ -5,14 +5,16 @@ const vonage = new Vonage({
 	apiSecret: process.env.VONAGE_API_SECRET,
 });
 
-exports.alert = (
-	receivers,
-	{ min, max, value, units, device, readingName }
-) => {
+const smsClient = require('twilio')(
+	process.env.TWILIO_SID,
+	process.env.TWILIO_AUTH_TOKEN
+);
+
+exports.alert = (receivers, { min, max, value, units, device, label }) => {
 	const content = `
     The device named "${device.name}" with the id "${
 		device.id
-	}" has recorded a ${readingName} of "${value} ${units}" which is ${
+	}" has recorded a ${label} of "${value} ${units}" which is ${
 		value < min
 			? 'less than the minimum value'
 			: 'greater than the maximum value'
@@ -26,31 +28,41 @@ exports.alert = (
 			// const receiver = '919989293194';
 			// const content = 'A content message sent using the Vonage SMS API';
 			console.log(`Sending message to ${receiver}`);
-			vonage.message.sendSms(
-				from,
-				receiver,
-				content,
-				(err, responseData) => {
-					if (err) {
-						console.log(err);
-					} else {
-						if (responseData.messages[0]['status'] === '0') {
-							console.log(
-								`Message sent successfully to ${receiver}`
-							);
-						} else {
-							console.log(
-								`Message failed with error: ${responseData.messages[0]['error-text']}`
-							);
-						}
-					}
-				}
-			);
+			smsClient.messages
+				.create({
+					to: receiver,
+					from: process.env.TWILIO_NUMBER,
+					body: content,
+				})
+				.then((msg) => console.log(`Sent SMS to ${receiver}`))
+				.catch((err) =>
+					console.log(`Error sending SMS to ${receiver}`)
+				);
+			// vonage.message.sendSms(
+			// 	from,
+			// 	receiver,
+			// 	content,
+			// 	(err, responseData) => {
+			// 		if (err) {
+			// 			console.log(err);
+			// 		} else {
+			// 			if (responseData.messages[0]['status'] === '0') {
+			// 				console.log(
+			// 					`Message sent successfully to ${receiver}`
+			// 				);
+			// 			} else {
+			// 				console.log(
+			// 					`Message failed with error: ${responseData.messages[0]['error-text']}`
+			// 				);
+			// 			}
+			// 		}
+			// 	}
+			// );
 			// console.log(`Sending alert to ${receiver}...`);
 			// await sgMail.send({
 			// 	to: receiver,
 			// 	from: process.env.SENDGRID_SENDER_EMAIL,
-			// 	subject: `${readingName} is out of range`,
+			// 	subject: `${label} is out of range`,
 			// 	text: content,
 			// 	html: content,
 			// });
@@ -63,37 +75,21 @@ exports.alert = (
 	// console.log(content);
 };
 
-// A function to find if a number is even or odd
-exports.isEven = (num) => {
-	return num % 2 === 0;
-};
-
-// A function to find if a number is prime or not
-exports.isPrime = (num) => {
-	for (let i = 2; i < num; i++) {
-		if (num % i === 0) return false;
-	}
-	return num > 1;
-};
-
-// A function to find if a number is palindrome or not
-exports.isPalindrome = (num) => {
-	return num.toString() === num.toString().split('').reverse().join('');
-};
-
-// A function to generate a random sequence of length n
-exports.randomSequence = (n) => {
-	let sequence = '';
-	for (let i = 0; i < n; i++) {
-		sequence += Math.floor(Math.random() * 10);
-	}
-	return sequence;
-};
-
-exports.isPerfectSquare = (num) => {
-	return Math.sqrt(num) % 1 === 0;
-};
-
-exports.isPerfectCube = (num) => {
-	return Math.cbrt(num) % 1 === 0;
+exports.verifyAccountSMS = (number, link) => {
+	const content = `
+	Welcome to Remote Alerting System!
+	To verify your account, please click on the following link:
+	${link}
+	`;
+	console.log(`Sending verification link to ${number}`);
+	smsClient.messages
+		.create({
+			to: number,
+			from: process.env.TWILIO_NUMBER,
+			body: content,
+		})
+		.then((msg) => console.log(`Sent verification link to ${number}`))
+		.catch((err) =>
+			console.log(`Error sending verification link to ${number}`)
+		);
 };

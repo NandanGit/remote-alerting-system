@@ -66,3 +66,21 @@ exports.addDataPoints = async (deviceId, dataPoints) => {
 	);
 	return updatedDevice;
 };
+
+exports.getDeviceRanges = async (deviceId) => {
+	const device = await Device.findOne({ deviceId }, { ranges: 1 });
+	if (!device) throw new CustomError('Device not found', 'device');
+	return device.ranges;
+};
+
+exports.getDeviceRecipients = async (deviceId) => {
+	const device = await Device.findOne(
+		{ deviceId },
+		{ recipients: 1, displayName: 1 }
+	);
+	if (!device) throw new CustomError('Device not found', 'device');
+	return {
+		recipients: device.recipients,
+		deviceName: device.displayName,
+	};
+};

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const dbOps = require('../db/operations');
 const { catchAsync } = require('../middleware/errorHandling');
 const CustomError = require('../utils/CustomError');
+const { verifyAccountSMS } = require('../notifications/sms');
 
 exports.signupController = catchAsync(async (req, res, next) => {
 	// Prevent user from not verifying the password
@@ -20,15 +21,21 @@ exports.signupController = catchAsync(async (req, res, next) => {
 	if (process.env.NODE_ENV !== 'production') {
 		return res.json({
 			success: true,
-			verificationLink: `http://127.0.0.1:${process.env.PORT}/auth/verify-account/${verificationToken}`,
+			verificationLink: `${process.env.DEV_BASE_URL}/auth/verify-account/${verificationToken}`,
 		});
 	}
+
+	// Send the verification email
+	verifyAccountSMS(
+		createdUser.mobileNumber,
+		`${process.env.PROD_BASE_URL}/auth/verify-account/${verificationToken}`
+	);
 
 	// Send the success message
 	res.json({
 		success: true,
 		message:
-			'Account created successfully, check the registered email for verification link',
+			'Account created successfully, verification link is sent to your mobile number.',
 	});
 });
 
@@ -58,7 +65,7 @@ exports.loginController = catchAsync(async (req, res, next) => {
 	if (!existingUser.isVerified) {
 		return next(
 			new CustomError(
-				'Account is not verified, Check you registered email for the verification link',
+				'Account is not verified, Check you registered mobile number for the verification link',
 				'notVerified'
 			)
 		);
