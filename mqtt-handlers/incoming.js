@@ -2,10 +2,12 @@ const { catchGeneralAsync } = require('../middleware/errorHandling');
 const CustomError = require('../utils/customError');
 const dbOps = require('../db/operations');
 const notifications = require('../notifications');
+const { formatTime } = require('../utils/timeFormatter');
 
 const handleIncomingDataPoints = catchGeneralAsync(async (payload) => {
 	const { deviceId, dataPoints } = payload;
-	console.log(`\nReceived data points for device ${deviceId}`);
+	// console.log(`\nReceived data points for device ${deviceId}`);
+	console.log(`${deviceId} | ${formatTime(new Date())} | `);
 	console.log(dataPoints);
 	if (!deviceId || !dataPoints)
 		throw new CustomError(
@@ -33,7 +35,7 @@ const handleIncomingDataPoints = catchGeneralAsync(async (payload) => {
 			// Get the recipient details
 			const { recipients, deviceName } =
 				await dbOps.Device.getDeviceRecipients(deviceId);
-			console.log(`Sending alert to ${recipients}`);
+			// console.log(`Sending alert to ${recipients}`);
 			notifications.email.notify(recipients, {
 				label,
 				value: dataPoints[label],

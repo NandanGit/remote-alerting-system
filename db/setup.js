@@ -1,5 +1,4 @@
 const { server } = require('../serverSetup');
-
 const mongoose = require('mongoose');
 const { User } = require('./models');
 
@@ -9,7 +8,6 @@ const MONGODB_URI =
 		: process.env.PROD_MONGODB_URI;
 
 console.log(process.env.NODE_ENV);
-// console.log(MONGODB_URI);
 
 const db = {
 	connect() {

@@ -25,7 +25,6 @@ app.use(cors());
 if (process.env.NODE_ENV !== 'production') {
 	app.use(morgan('dev'));
 }
-
 // // Mount Routes
 if (process.env.NODE_ENV !== 'production') {
 	app.use('/sandbox/', sandboxRoutes);

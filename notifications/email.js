@@ -34,7 +34,7 @@ exports.alert = (receivers, { min, max, value, units, device, label }) => {
 };
 
 exports.notify = (receivers, param) => {
-	console.log(receivers, param);
+	// console.log(receivers, param);
 	const emailReceivers = receivers
 		.filter((receiver) => receiver.type === 'email')
 		.map((receiver) => receiver.value);
